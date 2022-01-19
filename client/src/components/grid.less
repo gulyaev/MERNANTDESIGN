@@ -1,0 +1,29 @@
+.grid {
+  display: grid;
+  grid-template-rows: 100px 1fr;
+  grid-template-columns: 150px 1fr;
+  grid-template-areas: 
+    "head head"
+    "side content"
+  ;
+
+  &__head,
+  &__side,
+  &__content {
+    margin: 0px 0px 15px 0px;
+    padding: 0px 0px 10px 0px;
+    border: 2px solid rgba(150, 150, 150, 1);
+  }
+
+  &__head {
+    grid-area: head;
+  }
+
+  &__side {
+    grid-area: side;
+  }
+
+  &__content {
+    grid-area: content;
+  }
+}
