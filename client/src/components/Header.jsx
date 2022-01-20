@@ -2,6 +2,7 @@ import React from 'react';
 import "./header.less";
 import { PageHeader, Button, Typography, Row } from 'antd';
 import { NavLink } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
 
 const { Paragraph } = Typography;
 
@@ -64,31 +65,94 @@ const Content = ({ children, extraContent }) => (
 );
 
 const Header = () => {
-    return (
-        <PageHeader
-            onBack={() => null}
-            title="Title"
-            subTitle="This is a subtitle"
-            extra={[
-                <Button key="2"><NavLink to="/login">Войти</NavLink></Button>,
-                <Button key="1" type="primary"><NavLink to="/registration">Регистрация</NavLink></Button>,
-            ]}
-            avatar={{ src: 'https://avatars1.githubusercontent.com/u/8186664?s=460&v=4' }}
-            breadcrumb={{ routes }}
-        >
-            <Content
-                extraContent={
-                    <img
-                        src="https://gw.alipayobjects.com/zos/antfincdn/K%24NnlsB%26hz/pageHeader.svg"
-                        alt="content"
-                        width="100%"
-                    />
-                }
+    const isAuth = useSelector(state => state.user.isAuth);
+    const dispatch = useDispatch();
+
+    if (isAuth === true) {
+        return (
+            <PageHeader
+                onBack={() => null}
+                title="Title"
+                subTitle="This is a subtitle"
+                extra={[
+                    <Button key="2">Выйти</Button>
+                ]}
+                avatar={{ src: 'https://avatars1.githubusercontent.com/u/8186664?s=460&v=4' }}
+                breadcrumb={{ routes }}
             >
-                {content}
-            </Content>
-        </PageHeader>
-    )
+                <Content
+                    extraContent={
+                        <img
+                            src="https://gw.alipayobjects.com/zos/antfincdn/K%24NnlsB%26hz/pageHeader.svg"
+                            alt="content"
+                            width="100%"
+                        />
+                    }
+                >
+                    {content}
+                </Content>
+            </PageHeader>
+        );
+    } else {
+        return (
+            <PageHeader
+                onBack={() => null}
+                title="Title"
+                subTitle="This is a subtitle"
+                extra={[
+                    <Button key="2"><NavLink to="/login">Войти</NavLink></Button>,
+                    <Button key="1" type="primary"><NavLink to="/registration">Регистрация</NavLink></Button>
+                ]}
+                avatar={{ src: 'https://avatars1.githubusercontent.com/u/8186664?s=460&v=4' }}
+                breadcrumb={{ routes }}
+            >
+                <Content
+                    extraContent={
+                        <img
+                            src="https://gw.alipayobjects.com/zos/antfincdn/K%24NnlsB%26hz/pageHeader.svg"
+                            alt="content"
+                            width="100%"
+                        />
+                    }
+                >
+                    {content}
+                </Content>
+            </PageHeader>
+        );
+    }
+
+    /*
+    
+    
+    
+        return (
+            {!isAuth && 
+                <PageHeader
+                onBack={() => null}
+                title="Title"
+                subTitle="This is a subtitle"
+                extra={[
+                    <Button key="2"><NavLink to="/login">Войти</NavLink></Button>,
+                    <Button key="1" type="primary"><NavLink to="/registration">Регистрация</NavLink></Button>
+                ]}
+                avatar={{ src: 'https://avatars1.githubusercontent.com/u/8186664?s=460&v=4' }}
+                breadcrumb={{ routes }}
+            >
+                <Content
+                    extraContent={
+                        <img
+                            src="https://gw.alipayobjects.com/zos/antfincdn/K%24NnlsB%26hz/pageHeader.svg"
+                            alt="content"
+                            width="100%"
+                        />
+                    }
+                >
+                    {content}
+                </Content>
+            </PageHeader>
+        }
+        )
+    */
 };
 
 export default Header;
