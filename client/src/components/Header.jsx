@@ -1,7 +1,10 @@
 import React from 'react';
-import "./header.css";
+import "./header.less";
 import { PageHeader, Button, Typography, Row } from 'antd';
+import { NavLink } from "react-router-dom";
+
 const { Paragraph } = Typography;
+
 
 const routes = [
     {
@@ -67,10 +70,8 @@ const Header = () => {
             title="Title"
             subTitle="This is a subtitle"
             extra={[
-                <Button key="2">Войти</Button>,
-                <Button key="1" type="primary">
-                    Регистрация
-                </Button>,
+                <Button key="2"><NavLink to="/login">Войти</NavLink></Button>,
+                <Button key="1" type="primary"><NavLink to="/registration">Регистрация</NavLink></Button>,
             ]}
             avatar={{ src: 'https://avatars1.githubusercontent.com/u/8186664?s=460&v=4' }}
             breadcrumb={{ routes }}

@@ -1,6 +1,9 @@
-import React from 'react';
-import { Form, Input, Button, Checkbox } from 'antd';
-
+import React, { useState } from 'react';
+import { Form, Input, Button } from 'antd';
+import { Row, Col } from 'antd';
+import "./registration.less";
+import { registration } from "../../actions/user";
+import { useEffect } from 'react';
 
 const onFinish = (values) => {
     console.log('Success:', values);
@@ -11,42 +14,52 @@ const onFinishFailed = (errorInfo) => {
 };
 
 const Registration = () => {
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
+
+    useEffect(()=>{
+        console.log(email)
+    }, [email])
+
+
     return (
-        <Form
-            name="basic"
-            labelCol={{ span: 8 }}
-            wrapperCol={{ span: 16 }}
-            initialValues={{ remember: true }}
-            onFinish={onFinish}
-            onFinishFailed={onFinishFailed}
-            autoComplete="off"
-        >
-            <Form.Item
-                label="Username"
-                name="username"
-                rules={[{ required: true, message: 'Please input your username!' }]}
-            >
-                <Input />
-            </Form.Item>
+        <div className="registration">
+            <Row className='regrow'>
+                <Col className='regcol' span={12} offset={3}  justify="space-around" align="middle">
+                    <Form
+                        name="basic"
+                        labelCol={{ span: 8 }}
+                        wrapperCol={{ span: 16 }}
+                        initialValues={{ remember: true }}
+                        onFinish={onFinish}
+                        onFinishFailed={onFinishFailed}
+                        autoComplete="off"
+                    >
+                        <Form.Item
+                            label="Email"
+                            name="username"
+                            rules={[{ required: true, message: 'Введите email!' }]}
+                        >
+                            <Input value={email} onChange={(e)=>setEmail(e.target.value)}/>
+                        </Form.Item>
 
-            <Form.Item
-                label="Password"
-                name="password"
-                rules={[{ required: true, message: 'Please input your password!' }]}
-            >
-                <Input.Password />
-            </Form.Item>
+                        <Form.Item
+                            label="Пароль"
+                            name="password"
+                            rules={[{ required: true, message: 'Введите пароль' }]}
+                        >
+                            <Input.Password value={password} onChange={(e)=>setPassword(e.target.value)} />
+                        </Form.Item>
 
-            <Form.Item name="remember" valuePropName="checked" wrapperCol={{ offset: 8, span: 16 }}>
-                <Checkbox>Remember me</Checkbox>
-            </Form.Item>
-
-            <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
-                <Button type="primary" htmlType="submit">
-                    Submit
-                </Button>
-            </Form.Item>
-        </Form>
+                        <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
+                            <Button type="primary" htmlType="submit" onClick={()=> registration(email, password)}>
+                                Зарегистрироваться
+                            </Button>
+                        </Form.Item>
+                    </Form>
+                </Col>
+            </Row >
+        </div>
     )
 };
 
