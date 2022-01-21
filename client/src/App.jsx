@@ -1,13 +1,14 @@
 import React, { useEffect } from 'react';
-import Header from './components/Header';
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import Registration from "../src/components/registration/Registration";
-import Grid from "../src/components/Grid";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { Row, Col } from 'antd';
 import "./app.less";
-import Login from './components/registration/Login';
 import { useDispatch, useSelector } from "react-redux";
 import { auth } from "./actions/user";
+import Header from './components/Header';
+import Registration from "../src/components/registration/Registration";
+import Login from './components/registration/Login';
+import Grid from "../src/components/Grid";
+import Disk from "../src/components/disk/Disk";
 
 function App() {
   const isAuth = useSelector(state => state.user.isAuth);
@@ -22,12 +23,21 @@ function App() {
       <div className="wrapper">
         <Row>
           <Col span={18} offset={3}>
-            <Header />
-            {!isAuth &&
+            
+            {!isAuth ?
               <Routes>
                 <Route path="/registration" element={<Registration />} />
                 <Route path="/login" element={<Login />} />
+                <Route path="*" element={<Navigate to="/login" />} />
               </Routes>
+              :
+              <>
+              <Header />
+              <Routes>
+                <Route exact path="/" element={<Disk />} />
+                <Route path="*" element={<Navigate to="/" />} />
+              </Routes>
+              </>
             }
           </Col>
         </Row>
