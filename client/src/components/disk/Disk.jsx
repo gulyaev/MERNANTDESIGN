@@ -1,4 +1,5 @@
 import React, { useEffect } from "react";
+import { Button, Row, Col } from 'antd';
 import { useDispatch, useSelector } from "react-redux";
 import { getFiles } from "../../actions/file";
 import "./disk.less";
@@ -12,12 +13,18 @@ const Disk = () => {
         dispatch(getFiles(currentDir))
     }, [currentDir]);
 
+    const { size } = 'default';
+
     return (
         <div className="disk">
-            <div className="disk__btns">
-                <button className="disk__back">Назад</button>
-                <button className="disk__create">Создать папку</button>
-            </div>
+            <Row>
+                <Col lg={6}>
+                    <div className="disk__btns">
+                        <Button size={size}>Назад</Button>
+                        <Button type="dashed" size={size} className="disk__create">Создать папку</Button>
+                    </div>
+                </Col>
+            </Row>
             <FileList />
         </div>
     )

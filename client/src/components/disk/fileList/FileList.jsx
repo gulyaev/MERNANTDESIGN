@@ -1,25 +1,48 @@
 import React from "react";
+import { Table } from 'antd';
 import { useSelector } from "react-redux";
-import "./fileList.less"
-import File from "./file/File";
+import "./filelist.less";
+import { FolderOutlined } from '@ant-design/icons';
 
 const FileList = () => {
-    const files = useSelector(state => state.files.files).map(file => <File file={file} key={file.id}/>);
-    /*
-    const files = [{ _id: 1, name: 'direc', type: 'dir', size: '5gb', date: '20.02.2020' },
-    { _id: 1, name: 'direc', type: 'dir', size: '5gb', date: '20.02.2020' }
-    ].map(file => <File file={file} key={file.id} />);
-    */
+    const files = useSelector(state => state.files.files);
+
+    const filesStateFormated = files.map(file => {
+        const container = {};
+
+        container.img = <FolderOutlined style={{ fontSize: '35px', color: '#08c' }} />;
+        container.name = file.name;
+        container.date = file.date.slice(0, 10);
+        container.size = file.size;
+
+        return container;
+    })
+
+    const columns = [
+        {
+            title: '', //название колонки
+            dataIndex: 'img', // это название поля объекта файла
+            key: 'img' //просто совпадает с dataIndex
+        },
+        {
+            title: 'Название', //название колонки
+            dataIndex: 'name', // это название поля объекта файла
+            key: 'name' //просто совпадает с dataIndex
+        },
+        {
+            title: 'Дата',
+            dataIndex: 'date',
+            key: 'date'
+        },
+        {
+            title: 'Размер',
+            dataIndex: 'size',
+            key: 'size'
+        },
+    ]
 
     return (
-        <div className="filelist">
-            <div className="filelist__header">
-                <div className="filelist__name">Название</div>
-                <div className="filelist__date">Дата</div>
-                <div className="filelist__size">Размер</div>
-            </div>
-            {files}
-        </div>
+        <Table dataSource={filesStateFormated} columns={columns} className="table"/>
     )
 }
 

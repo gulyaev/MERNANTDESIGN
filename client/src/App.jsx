@@ -7,7 +7,6 @@ import { auth } from "./actions/user";
 import Header from './components/Header';
 import Registration from "../src/components/registration/Registration";
 import Login from './components/registration/Login';
-import Grid from "../src/components/Grid";
 import Disk from "../src/components/disk/Disk";
 
 function App() {
