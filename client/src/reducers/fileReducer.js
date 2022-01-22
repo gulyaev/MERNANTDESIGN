@@ -1,5 +1,6 @@
 const SET_FILES = "SET_FILES";
 const SET_CURRENT_DIR = "SET_CURRENT_DIR";
+const ADD_FILE = "ADD_FILE";
 
 const defaultState = {
     files: [],
@@ -18,11 +19,17 @@ export default function fileReducer(state = defaultState, action) {
                 ...state,
                 currentDir: action.payload
             }
+        case ADD_FILE:
+            return {
+                ...state,
+                files: [...state.files, action.payload]
+            }
 
         default:
             return state
     }
 }
 
-export const setFiles = (files) => ({type: SET_FILES, payload: files});
-export const setCurrentDir = (dir) => ({type: SET_CURRENT_DIR, payload: dir});
+export const setFiles = (files) => ({ type: SET_FILES, payload: files });
+export const setCurrentDir = (dir) => ({ type: SET_CURRENT_DIR, payload: dir });
+export const addFile = (file) => ({ type: ADD_FILE, payload: file });
