@@ -1,11 +1,15 @@
 import React from "react";
 import { Table } from 'antd';
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import "./filelist.less";
 import { FolderOutlined } from '@ant-design/icons';
+import { setCurrentDir } from "../../../reducers/fileReducer";
+import { pushToStack } from "../../../reducers/fileReducer";
 
 const FileList = () => {
     const files = useSelector(state => state.files.files);
+    const dispatch = useDispatch();
+    const currentDir = useSelector(state => state.files.currentDir);
 
     const filesStateFormated = files.map(file => {
         const container = {};
@@ -14,9 +18,18 @@ const FileList = () => {
         container.name = file.name;
         container.date = file.date.slice(0, 10);
         container.size = file.size;
+        container.id = file._id;
+        container.type = file.type;
 
         return container;
     })
+
+    const openDirHandler  = (record, rowIndex) => {
+        if (record.type === 'dir') {
+            dispatch(pushToStack(currentDir));
+            dispatch(setCurrentDir(record.id));
+        }
+    }
 
     const columns = [
         {
@@ -38,11 +51,16 @@ const FileList = () => {
             title: 'Размер',
             dataIndex: 'size',
             key: 'size'
-        },
+        }
     ]
 
     return (
-        <Table dataSource={filesStateFormated} columns={columns} className="table"/>
+        <Table onRow={(record, rowIndex) => {
+            return {
+              onClick: event => {openDirHandler (record, rowIndex)}, // click row
+            };
+          }}
+        dataSource={filesStateFormated} columns={columns} className="table"/>
     )
 }
 
