@@ -16,7 +16,7 @@ const FileList = () => {
 
         container.img = <FolderOutlined style={{ fontSize: '35px', color: '#08c' }} />;
         container.name = file.name;
-        container.date = file.date.slice(0, 10);
+        //container.date = file.date.slice(0, 10);
         container.size = file.size;
         container.id = file._id;
         container.type = file.type;
