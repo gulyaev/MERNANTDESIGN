@@ -7,14 +7,15 @@ import { setCurrentDir } from "../../reducers/fileReducer";
 import "./disk.less";
 import FileList from "./fileList/FileList";
 import Popup from "./Popup";
+import DraggerComponent from "./DraggerComponent";
 
 const Disk = () => {
     const dispatch = useDispatch();
     const currentDir = useSelector(state => state.files.currentDir);
     const dirStack = useSelector(state => state.files.dirStack);
     const [isModalVisible, setIsModalVisible] = useState(false);
+    const [dragEnter, setDragEnter] = useState(false);
     const { size } = 'default';
-    const [defaultFileList, setDefaultFileList] = useState([]);
 
     useEffect(() => {
         dispatch(getFiles(currentDir))
@@ -59,8 +60,20 @@ const Disk = () => {
         customRequest: dummyRequest
     }
 
-    return (
-        <div className="disk">
+    const dragEnterHandler = (event) => {
+        event.preventDefault();
+        event.stopPropagation();
+        setDragEnter(true);
+    }
+
+    const dragLeaveHandler = (event) => {
+        event.preventDefault();
+        event.stopPropagation();
+        setDragEnter(false);
+    }
+
+    return ( !dragEnter ?
+        <div className="disk" onDragEnter={dragEnterHandler} onDragLeave={dragLeaveHandler} onDragOver={dragEnterHandler}>
             <Row>
                 <Col lg={10}>
                     <div className="disk__btns">
@@ -74,6 +87,11 @@ const Disk = () => {
             </Row>
             <FileList />
             <Popup isModalVisible={isModalVisible} setIsModalVisible={setIsModalVisible} />
+        </div>
+        :
+        <div className="drop-area" onDragEnter={dragEnterHandler} onDragLeave={dragLeaveHandler} onDragOver={dragEnterHandler}>
+            {/**/}
+            <DraggerComponent setDragEnter={setDragEnter}/>
         </div>
     )
 }
