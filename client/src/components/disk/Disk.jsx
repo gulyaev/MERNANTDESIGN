@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Upload, message, Button, Row, Col } from 'antd';
-import { UploadOutlined } from '@ant-design/icons';
+import { Button, Row, Col, Input } from 'antd';
 import { useDispatch, useSelector } from "react-redux";
 import { getFiles, uploadFile } from "../../actions/file";
 import { setCurrentDir } from "../../reducers/fileReducer";
@@ -30,36 +29,6 @@ const Disk = () => {
         dispatch(setCurrentDir(backDirId));
     }
 
-    const dummyRequest = ({ file, fileList, onSuccess }) => {
-        setTimeout(() => {
-            onSuccess("ok");
-        }, 0);
-    };
-
-    const props = {
-        name: 'file',
-        type: "file",
-        multiple: 'true',
-        onChange(info) {
-            if (info.file.status !== 'uploading') {
-                console.log("info.file " + JSON.stringify(info.file), "info.fileList " + JSON.stringify(info.fileList));
-                dispatch(uploadFile(info.file, currentDir));
-            }
-            if (info.file.status === 'done') {
-                message.success(`${info.file.name} file uploaded successfully`);
-
-                const newDatafile = {
-                    filename: info.file.name,
-                    filesizeBytes: info.file.size
-                }
-                console.log("Antd onSuccess file " + JSON.stringify(newDatafile));
-            } else if (info.file.status === 'error') {
-                message.error(`${info.file.name} file upload failed.`);
-            }
-        },
-        customRequest: dummyRequest
-    }
-
     const dragEnterHandler = (event) => {
         event.preventDefault();
         event.stopPropagation();
@@ -72,16 +41,20 @@ const Disk = () => {
         setDragEnter(false);
     }
 
-    return ( !dragEnter ?
+    const fileUploadHandler = event => {
+        const files = [...event.target.files];
+        files.forEach(file => dispatch(uploadFile(file, currentDir)));
+    }
+
+    return (!dragEnter ?
         <div className="disk" onDragEnter={dragEnterHandler} onDragLeave={dragLeaveHandler} onDragOver={dragEnterHandler}>
             <Row>
-                <Col lg={10}>
+                <Col lg={9}>
                     <div className="disk__btns">
                         <Button size={size} className="disk__back" onClick={() => backClickHandler()}>Назад</Button>
                         <Button type="dashed" size={size} className="disk__create" onClick={() => showModal()}>Создать папку</Button>
-                        <Upload {...props}>
-                            <Button icon={<UploadOutlined />}>Загрузить файл</Button>
-                        </Upload>
+                        <Input onChange={(event) => fileUploadHandler(event)} multiple="true" type="file" id="disk__upload-input" placeholder="Basic usage" hidden={true} />
+                        <label htmlFor="disk__upload-input" className="disk__upload-label">Загрузить файл</label>
                     </div>
                 </Col>
             </Row>
@@ -90,8 +63,7 @@ const Disk = () => {
         </div>
         :
         <div className="drop-area" onDragEnter={dragEnterHandler} onDragLeave={dragLeaveHandler} onDragOver={dragEnterHandler}>
-            {/**/}
-            <DraggerComponent setDragEnter={setDragEnter}/>
+            <DraggerComponent setDragEnter={setDragEnter} />
         </div>
     )
 }

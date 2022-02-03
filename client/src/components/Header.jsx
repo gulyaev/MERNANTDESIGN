@@ -120,39 +120,6 @@ const Header = () => {
             </PageHeader>
         );
     }
-
-    /*
-    
-    
-    
-        return (
-            {!isAuth && 
-                <PageHeader
-                onBack={() => null}
-                title="Title"
-                subTitle="This is a subtitle"
-                extra={[
-                    <Button key="2"><NavLink to="/login">Войти</NavLink></Button>,
-                    <Button key="1" type="primary"><NavLink to="/registration">Регистрация</NavLink></Button>
-                ]}
-                avatar={{ src: 'https://avatars1.githubusercontent.com/u/8186664?s=460&v=4' }}
-                breadcrumb={{ routes }}
-            >
-                <Content
-                    extraContent={
-                        <img
-                            src="https://gw.alipayobjects.com/zos/antfincdn/K%24NnlsB%26hz/pageHeader.svg"
-                            alt="content"
-                            width="100%"
-                        />
-                    }
-                >
-                    {content}
-                </Content>
-            </PageHeader>
-        }
-        )
-    */
 };
 
 export default Header;

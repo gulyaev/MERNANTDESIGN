@@ -39,37 +39,39 @@ class FileController {
 
     async uploadFile(req, res) {
         try {
-            //const file = req.files.file;
-            const file = req.body.file;
-            const fileParsed = JSON.parse(file);
+            const file = req.files.file;
+            //const file = req.body.file;
+            //const fileParsed = JSON.parse(file);
+            console.log(file);
 
             const parent = await File.findOne({ user: req.user.id, _id: req.body.parent });
             const user = await User.findOne({ _id: req.user.id });
 
-            
+
             if (user.usedSpace + file.size > user.diskSpace) {
-                return res.status(400).json({message: "No space on the disk"})
+                return res.status(400).json({ message: "No space on the disk" })
             }
 
-            user.usedSpace =user.usedSpace + file.size;
+            user.usedSpace = user.usedSpace + file.size;
 
             let path;
-            if (parent) {
-                path = `${config.get('filePath')}/${user._id}/${parent.path}/${fileParsed.name}`;
-            } else {
-                path = `${config.get('filePath')}/${user._id}/${fileParsed.name}`;
-            }
+            //if (parent) {
+            //    path = `${config.get('filePath')}/${user._id}/${parent.path}/${file.name}`;
+            //} else {
+            path = `${config.get('filePath')}/${user._id}/${file.name}`;
+            //}
 
-            if(fs.existsSync(path)) {
-                return res.status(400).json({message:'File allready exists'});
+            if (fs.existsSync(path)) {
+                return res.status(400).json({ message: 'File allready exists' });
             }
-            //file.mv(path);
+            file.mv(path);
 
-            const type = fileParsed.name.split('.').pop();
-            const dbFile = new File ({
-                name: fileParsed.name,
-                type,
-                size: fileParsed.size,
+            //const type = fileParsed.name.split('.').pop();
+            //const type = file.name.split('.').pop();
+            const dbFile = new File({
+                name: file.name,
+                type: "jpg",
+                size: file.size,
                 path: parent?.path,
                 parent: parent?._id,
                 user: user._id
@@ -82,6 +84,24 @@ class FileController {
         } catch (error) {
             console.log(error);
             return res.status(500).json({ message: "Upload error" });
+        }
+    }
+
+    async downloadFile(req, res) {
+        try {
+            const file = await File.findOne({_id: req.query._id, user: req.user.id});
+            console.log("file" + file.name);
+            //const path = `${config.get('filePath')}/${req.user.id}/${file.path}/${file.name}`;
+            const path = `${config.get('filePath')}/${req.user.id}/${file.name}`;
+            
+            if(fs.existsSync(path)) {
+                return res.download(path, file.name);
+            }
+            return res.status(400).json({message: "Download error"});
+            
+        } catch (error) {
+            console.log(error);
+            res.status(500).json({message:"Download error"});
         }
     }
 }

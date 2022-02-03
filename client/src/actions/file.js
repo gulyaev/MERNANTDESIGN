@@ -36,19 +36,21 @@ export const uploadFile = (file, dirId) => {
     return async dispatch => {
         try {
             const formData = new FormData();
-            formData.append('file', JSON.stringify(file));
-            //formData.append('file', file);
+            //formData.append('file', JSON.stringify(file));
+            formData.append('file', file);
             if (dirId) {
                 formData.append('parent', dirId);
+                console.log("dirId" + dirId);
             }
             for (let [name, value] of formData) {
-                console.log(`${name} = ${value}`); // key1=value1, потом key2=value2
+                console.log(`fdfs + ${name} = ${value}`); // key1=value1, потом key2=value2
             }
-            
+
             const response = await axios.post(`http://localhost:5000/api/files/upload`, formData, {
-                headers: { Authorization: `Bearer ${localStorage.getItem('token')}`,
-                "content-type": "application/json"
-            },
+                headers: {
+                    Authorization: `Bearer ${localStorage.getItem('token')}`,
+                    "content-type": "application/json"
+                },
                 onUploadProgress: progressEvent => {
                     const totalLength = progressEvent.lengthComputable ? progressEvent.total : progressEvent.target.getResponseHeader('content-length') || progressEvent.target.getResponseHeader('x-decompressed-content-length');
                     console.log('total', totalLength)
@@ -62,5 +64,21 @@ export const uploadFile = (file, dirId) => {
         } catch (error) {
             alert(error.response.data.message);
         }
+    }
+}
+
+export const downloadFile = async (file) => {
+    const responce = await fetch(`http://localhost:5000/api/files/download?_id=${file._id}`, {
+        headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+    });
+    if (responce.status === 200) {
+        const blob = await responce.blob();
+        const downloadUrl = window.URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = downloadUrl;
+        link.download = file.name;
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
     }
 }
