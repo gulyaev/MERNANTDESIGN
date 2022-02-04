@@ -54,25 +54,38 @@ class FileController {
 
             user.usedSpace = user.usedSpace + file.size;
 
-            let path;
-            //if (parent) {
-            //    path = `${config.get('filePath')}/${user._id}/${parent.path}/${file.name}`;
-            //} else {
-            path = `${config.get('filePath')}/${user._id}/${file.name}`;
-            //}
+            let path, pathUserId, pathUserIdAndParent;
+            if (parent) {
+                pathUserIdAndParent = `${config.get('filePath')}/${user._id}/${parent.path}`;
+                path = `${config.get('filePath')}/${user._id}/${parent.path}/${file.name}`;
+            } else {
+                pathUserId = `${config.get('filePath')}/${user._id}`;
+                path = `${config.get('filePath')}/${user._id}/${file.name}`;
+            }
 
             if (fs.existsSync(path)) {
-                return res.status(400).json({ message: 'File allready exists' });
+                return res.status(400).json({ message: 'File allready existsрпр' });
             }
-            file.mv(path);
-
+            else {
+                if (parent) {
+                    fs.mkdirSync(pathUserIdAndParent, { recursive: true });
+                    file.mv(path);
+                } else {
+                    fs.mkdirSync(pathUserId, { recursive: true });
+                    file.mv(path);
+                }
+            }
             //const type = fileParsed.name.split('.').pop();
-            //const type = file.name.split('.').pop();
+            const type = file.name.split('.').pop();
+            let filePath = file.name;
+            if(parent) {
+                filePath = `${parent.path}/${file.name}` 
+            }
             const dbFile = new File({
                 name: file.name,
-                type: "jpg",
+                type,
                 size: file.size,
-                path: parent?.path,
+                path: filePath,
                 parent: parent?._id,
                 user: user._id
             });
@@ -89,19 +102,33 @@ class FileController {
 
     async downloadFile(req, res) {
         try {
-            const file = await File.findOne({_id: req.query._id, user: req.user.id});
+            const file = await File.findOne({ _id: req.query._id, user: req.user.id });
             console.log("file" + file.name);
-            //const path = `${config.get('filePath')}/${req.user.id}/${file.path}/${file.name}`;
-            const path = `${config.get('filePath')}/${req.user.id}/${file.name}`;
-            
-            if(fs.existsSync(path)) {
+            const path = `${config.get('filePath')}/${req.user.id}/${file.path}/${file.name}`;
+
+            if (fs.existsSync(path)) {
                 return res.download(path, file.name);
             }
-            return res.status(400).json({message: "Download error"});
-            
+            return res.status(400).json({ message: "Download error" });
+
         } catch (error) {
             console.log(error);
-            res.status(500).json({message:"Download error"});
+            res.status(500).json({ message: "Download error" });
+        }
+    }
+
+    async deleteFile(req, res) {
+        try {
+            const file = await File.findOne({_id: req.query.id, user: req.user.id});
+            if (!file) {
+                return res.status(400).json({message: "File not found"});
+            }
+            fileService.deleteFile(file);
+            await file.remove();
+            return res.json({message: "File was deleted"});
+        } catch (error) {
+            console.log(error);
+            res.status(400).json({ message: "Dir is not empty" });
         }
     }
 }

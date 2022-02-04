@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Button, Row, Col, Input } from 'antd';
+import { Upload, message } from 'antd';
 import { useDispatch, useSelector } from "react-redux";
 import { getFiles, uploadFile } from "../../actions/file";
 import { setCurrentDir } from "../../reducers/fileReducer";
@@ -54,7 +55,7 @@ const Disk = () => {
                         <Button size={size} className="disk__back" onClick={() => backClickHandler()}>Назад</Button>
                         <Button type="dashed" size={size} className="disk__create" onClick={() => showModal()}>Создать папку</Button>
                         <Input onChange={(event) => fileUploadHandler(event)} multiple="true" type="file" id="disk__upload-input" placeholder="Basic usage" hidden={true} />
-                        <label htmlFor="disk__upload-input" className="disk__upload-label">Загрузить файл</label>
+                        <label htmlFor="disk__upload-input" className="disk__upload-label">Загрузить файл</label> 
                     </div>
                 </Col>
             </Row>

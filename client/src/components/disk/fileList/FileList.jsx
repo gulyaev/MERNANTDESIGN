@@ -5,21 +5,27 @@ import "./fileList.less";
 import { FolderOutlined } from '@ant-design/icons';
 import { setCurrentDir } from "../../../reducers/fileReducer";
 import { pushToStack } from "../../../reducers/fileReducer";
-import { downloadFile } from "../../../actions/file";
+import { deleteFile, downloadFile } from "../../../actions/file";
 
 const FileList = () => {
     const files = useSelector(state => state.files.files);
     const dispatch = useDispatch();
     const currentDir = useSelector(state => state.files.currentDir);
 
-    const filesStateFormated = files.map(file => {
+    const filesStateFormated = files.map(file => { 
         const downloadClickHandler = (e) => {
             e.stopPropagation();
             downloadFile(file);
         }
 
+        const deleteClickHandler = (e) => {
+            e.stopPropagation();
+            dispatch(deleteFile(file));
+        }
+
         const container = {};
 
+        container.key=file._id;
         container.img = <FolderOutlined style={{ fontSize: '35px', color: '#08c' }} />;
         container.name = file.name;
         container.date = file.date.slice(0, 10);
@@ -27,7 +33,7 @@ const FileList = () => {
         container.id = file._id;
         container.type = file.type;
         container.download = <Button onClick={(e) => downloadClickHandler(e)} type="text">Скачать</Button>;
-        container.delete = <Button type="text">Удалить</Button>;
+        container.delete = <Button onClick={(e) => deleteClickHandler(e)} type="text">Удалить</Button>;
 
 
         return container;
