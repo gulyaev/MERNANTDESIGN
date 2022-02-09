@@ -1,0 +1,105 @@
+.uploader {
+  height: 300px;
+  width: 300px;
+  position: fixed;
+  background-color: #fff;
+  bottom: 0;
+  right: 0;
+  padding: 20px;
+  border: 1px solid rgba(0, 0, 0, 0.5);
+  border-radius: 12px;
+  overflow-y: auto;
+  display: grid;
+  grid-template-columns: 1fr 20px;
+  grid-template-rows: 20px 1fr;
+  grid-template-areas: 
+    "title close"
+    "content content"
+  ;
+
+  &__title,
+  &__close,
+  &__content {
+    padding: 1px;
+  }
+
+  &__title {
+    grid-area: title;
+    height: 20px;
+    line-height: 15px;
+    padding-left: 5px;
+    font-size: 1.2rem;
+  }
+
+  &__close {
+    grid-area: close;
+    height: 20px;
+    line-height: 1px;
+    padding: 8px 8px 10px 5px;
+  }
+
+  &__content {
+    grid-area: content;
+    padding: 5px 0 0 5px;
+  }
+}
+
+.upload-file {
+  padding: 5px 7px;
+  border: 1px solid rgba(0, 0, 0, 0.5);
+  border-radius: 8px;
+  display: grid;
+  grid-template-columns: 1fr 20px;
+  grid-template-rows: 20px 1fr;
+  grid-template-areas: 
+    "name remove"
+    "progress-bar progress-bar"
+  ;
+
+  &__name,
+  &__remove,
+  &__progress-bar {
+    padding: 1px;
+    margin: 0px 1px 1px 0;
+  }
+
+  &__name {
+    grid-area: name;
+    height: 20px;
+    line-height: 17px;
+    padding: 0 0 0 5px;
+    margin-bottom: 1px;
+  }
+
+  &__remove {
+    grid-area: remove;
+    height: 10px;
+    line-height: 1px;
+    padding: 6px 1px 10px 2px;
+  }
+
+  &__progress-bar {
+    grid-area: progress-bar;
+    padding: 5px 0 0 5px;
+    height: 35px;
+    line-height: 20px;
+    border-radius: 8px;
+    background-color: rosybrown;
+    margin: 5px 0;
+    display: flex;
+  }
+
+  &__upload-bar {
+    background-color: green;
+    width: 0;
+    border: 1px solid rgba(0, 0, 0, 0.5);
+    height: 20px;
+    line-height: 20px;
+    border-radius: 3px;
+  }
+
+  &__percent {
+    left: 50%;
+    position: absolute;
+  }
+}

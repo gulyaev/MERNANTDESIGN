@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import { Button, Row, Col, Input } from 'antd';
-import { Upload, message } from 'antd';
 import { useDispatch, useSelector } from "react-redux";
 import { getFiles, uploadFile } from "../../actions/file";
 import { setCurrentDir } from "../../reducers/fileReducer";
@@ -8,6 +7,7 @@ import "./disk.less";
 import FileList from "./fileList/FileList";
 import Popup from "./Popup";
 import DraggerComponent from "./DraggerComponent";
+import Uploader from "./uploader/Uploader";
 
 const Disk = () => {
     const dispatch = useDispatch();
@@ -61,6 +61,7 @@ const Disk = () => {
             </Row>
             <FileList />
             <Popup isModalVisible={isModalVisible} setIsModalVisible={setIsModalVisible} />
+            <Uploader/>
         </div>
         :
         <div className="drop-area" onDragEnter={dragEnterHandler} onDragLeave={dragLeaveHandler} onDragOver={dragEnterHandler}>

@@ -1,6 +1,7 @@
 import axios from "axios";
 import { setFiles, addFile } from "../reducers/fileReducer";
 import { deleteFileAction } from "../reducers/fileReducer";
+import { addUploadFile, changeUploadFile, showUploader } from "../reducers/uploadReducer";
 
 export const getFiles = (dirId) => {
     return async dispatch => {
@@ -46,7 +47,9 @@ export const uploadFile = (file, dirId) => {
             for (let [name, value] of formData) {
                 console.log(`fdfs + ${name} = ${value}`); // key1=value1, потом key2=value2
             }
-
+            const uploadFile = {name:file.name, progress:0, id: Date.now()};
+            dispatch(showUploader());
+            dispatch(addUploadFile(uploadFile));
             const response = await axios.post(`http://localhost:5000/api/files/upload`, formData, {
                 headers: {
                     Authorization: `Bearer ${localStorage.getItem('token')}`,
@@ -54,10 +57,10 @@ export const uploadFile = (file, dirId) => {
                 },
                 onUploadProgress: progressEvent => {
                     const totalLength = progressEvent.lengthComputable ? progressEvent.total : progressEvent.target.getResponseHeader('content-length') || progressEvent.target.getResponseHeader('x-decompressed-content-length');
-                    console.log('total', totalLength)
+                    console.log('total', totalLength);
                     if (totalLength) {
-                        let progress = Math.round((progressEvent.loaded * 100) / totalLength)
-                        console.log(progress)
+                        uploadFile.progress = Math.round((progressEvent.loaded * 100) / totalLength);
+                        dispatch(changeUploadFile(uploadFile));
                     }
                 }
             });
