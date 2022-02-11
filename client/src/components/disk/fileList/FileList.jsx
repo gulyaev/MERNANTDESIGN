@@ -2,10 +2,11 @@ import React from "react";
 import { Table, Button } from 'antd';
 import { useSelector, useDispatch } from "react-redux";
 import "./fileList.less";
-import { FolderOutlined } from '@ant-design/icons';
+import { FileOutlined, FolderFilled } from '@ant-design/icons';
 import { setCurrentDir } from "../../../reducers/fileReducer";
 import { pushToStack } from "../../../reducers/fileReducer";
 import { deleteFile, downloadFile } from "../../../actions/file";
+import sizeFormat from "../../../utils/sizeFormat";
 
 const FileList = () => {
     const files = useSelector(state => state.files.files);
@@ -26,10 +27,14 @@ const FileList = () => {
         const container = {};
 
         container.key=file._id;
-        container.img = <FolderOutlined style={{ fontSize: '35px', color: '#08c' }} />;
+        if (file.type === 'dir') {
+            container.img = <FolderFilled style={{ fontSize: '35px', color: '#08c' }}/>;
+        } else {
+            container.img = <FileOutlined style={{ fontSize: '35px', color: '#08c' }}/>;
+        }
         container.name = file.name;
         container.date = file.date.slice(0, 10);
-        container.size = file.size;
+        container.size = sizeFormat(file.size);
         container.id = file._id;
         container.type = file.type;
         container.download = <Button onClick={(e) => downloadClickHandler(e)} type="text">Скачать</Button>;
@@ -66,8 +71,12 @@ const FileList = () => {
             title: 'Размер',
             dataIndex: 'size',
             key: 'size'
-        }
-        ,
+        },
+        {
+            title: 'Тип',
+            dataIndex: 'type',
+            key: 'type'
+        },
         {
             title: '',
             dataIndex: 'download',

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Button, Row, Col, Input } from 'antd';
+import { Button, Row, Col, Input, Select } from 'antd';
 import { useDispatch, useSelector } from "react-redux";
 import { getFiles, uploadFile } from "../../actions/file";
 import { setCurrentDir } from "../../reducers/fileReducer";
@@ -15,11 +15,12 @@ const Disk = () => {
     const dirStack = useSelector(state => state.files.dirStack);
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [dragEnter, setDragEnter] = useState(false);
+    const [sort, setSort] = useState('type');
     const { size } = 'default';
 
     useEffect(() => {
-        dispatch(getFiles(currentDir))
-    }, [currentDir]);
+        dispatch(getFiles(currentDir, sort))
+    }, [currentDir, sort]);
 
     const showModal = () => {
         setIsModalVisible(true);
@@ -47,21 +48,35 @@ const Disk = () => {
         files.forEach(file => dispatch(uploadFile(file, currentDir)));
     }
 
+    //for select:
+    const { Option } = Select;
+
+    function handleChange(value) {
+        console.log(`selected ${value}`);
+        setSort(value);
+    }
+
     return (!dragEnter ?
         <div className="disk" onDragEnter={dragEnterHandler} onDragLeave={dragLeaveHandler} onDragOver={dragEnterHandler}>
             <Row>
-                <Col lg={9}>
+                <Col lg={16}>
                     <div className="disk__btns">
                         <Button size={size} className="disk__back" onClick={() => backClickHandler()}>Назад</Button>
                         <Button type="dashed" size={size} className="disk__create" onClick={() => showModal()}>Создать папку</Button>
                         <Input onChange={(event) => fileUploadHandler(event)} multiple="true" type="file" id="disk__upload-input" placeholder="Basic usage" hidden={true} />
-                        <label htmlFor="disk__upload-input" className="disk__upload-label">Загрузить файл</label> 
+                        <label htmlFor="disk__upload-input" className="disk__upload-label">Загрузить файл</label>
+
+                        <Select defaultValue={sort} style={{ width: 120 }} onChange={handleChange}>
+                            <Option value="name">По имени</Option>
+                            <Option value="type">По типу</Option>
+                            <Option value="date">По дате</Option>
+                        </Select>
                     </div>
                 </Col>
             </Row>
             <FileList />
             <Popup isModalVisible={isModalVisible} setIsModalVisible={setIsModalVisible} />
-            <Uploader/>
+            <Uploader />
         </div>
         :
         <div className="drop-area" onDragEnter={dragEnterHandler} onDragLeave={dragLeaveHandler} onDragOver={dragEnterHandler}>
