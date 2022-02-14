@@ -1,25 +1,33 @@
 import React, { useEffect, useState } from "react";
-import { Button, Row, Col, Input, Select } from 'antd';
+import { Button, Row, Col, Input, Select, Spin, Space } from 'antd';
+import { LoadingOutlined } from '@ant-design/icons';
 import { useDispatch, useSelector } from "react-redux";
-import { getFiles, uploadFile } from "../../actions/file";
+import { getFiles, searchFiles, uploadFile } from "../../actions/file";
 import { setCurrentDir } from "../../reducers/fileReducer";
 import "./disk.less";
 import FileList from "./fileList/FileList";
 import Popup from "./Popup";
 import DraggerComponent from "./DraggerComponent";
 import Uploader from "./uploader/Uploader";
+import { showLoader } from "../../reducers/appReducer";
 
 const Disk = () => {
     const dispatch = useDispatch();
     const currentDir = useSelector(state => state.files.currentDir);
     const dirStack = useSelector(state => state.files.dirStack);
+    const loader = useSelector(state => state.app.loader);
+    const isAuth = useSelector(state => state.user.isAuth);
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [dragEnter, setDragEnter] = useState(false);
     const [sort, setSort] = useState('type');
+    const [searchName, setSearchName] = useState('');
+    const [searchTimeout, setSearchTimeout] = useState(false);
     const { size } = 'default';
+    const { Search } = Input;
+    const antIcon = <LoadingOutlined style={{ fontSize: 75 }} spin />;
 
     useEffect(() => {
-        dispatch(getFiles(currentDir, sort))
+        dispatch(getFiles(currentDir, sort));
     }, [currentDir, sort]);
 
     const showModal = () => {
@@ -56,21 +64,52 @@ const Disk = () => {
         setSort(value);
     }
 
+    const onSearch = (e) => {
+        setSearchName(e.target.value);
+        if (searchTimeout != false) {
+            clearTimeout(searchTimeout)
+        }
+        //dispatch(showLoader());
+        if (e.target.value != '') {
+            setSearchTimeout(setTimeout((value) => {
+                dispatch(searchFiles(value));
+            }, 500, e.target.value));
+        } else {
+            dispatch(getFiles(currentDir))
+        }
+    }
+
+    if (loader == true) {
+        return (
+            <div className="loader">
+                <Space size="large">
+                    <Spin indicator={antIcon} />
+                </Space>
+            </div>
+        )
+    }
+
     return (!dragEnter ?
         <div className="disk" onDragEnter={dragEnterHandler} onDragLeave={dragLeaveHandler} onDragOver={dragEnterHandler}>
             <Row>
-                <Col lg={16}>
+                <Col lg={17}>
                     <div className="disk__btns">
                         <Button size={size} className="disk__back" onClick={() => backClickHandler()}>Назад</Button>
                         <Button type="dashed" size={size} className="disk__create" onClick={() => showModal()}>Создать папку</Button>
                         <Input onChange={(event) => fileUploadHandler(event)} multiple="true" type="file" id="disk__upload-input" placeholder="Basic usage" hidden={true} />
                         <label htmlFor="disk__upload-input" className="disk__upload-label">Загрузить файл</label>
 
-                        <Select defaultValue={sort} style={{ width: 120 }} onChange={handleChange}>
+                        <Select className="sort" defaultValue={sort} style={{ width: 120 }} onChange={handleChange}>
                             <Option value="name">По имени</Option>
                             <Option value="type">По типу</Option>
                             <Option value="date">По дате</Option>
                         </Select>
+
+                        {isAuth && <Search
+                            value={searchName}
+                            placeholder="Назание файла"
+                            onChange={(e) => onSearch(e)}
+                            style={{ width: 200 }}/>}
                     </div>
                 </Col>
             </Row>

@@ -89,6 +89,12 @@ const FileList = () => {
         }
     ]
 
+    if(files.length == 0){
+        return (
+            <div className="loader">Файлы не найдены</div>
+        )
+    }
+
     return (
         <Table onRow={(record, rowIndex) => {
             return {
