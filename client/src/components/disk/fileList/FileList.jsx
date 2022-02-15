@@ -7,13 +7,15 @@ import { setCurrentDir } from "../../../reducers/fileReducer";
 import { pushToStack } from "../../../reducers/fileReducer";
 import { deleteFile, downloadFile } from "../../../actions/file";
 import sizeFormat from "../../../utils/sizeFormat";
+import File from './file/File';
 
 const FileList = () => {
     const files = useSelector(state => state.files.files);
-    const dispatch = useDispatch();
     const currentDir = useSelector(state => state.files.currentDir);
+    const fileView = useSelector(state => state.files.view);
+    const dispatch = useDispatch();
 
-    const filesStateFormated = files.map(file => { 
+    const filesStateFormated = files.map(file => {
         const downloadClickHandler = (e) => {
             e.stopPropagation();
             downloadFile(file);
@@ -26,11 +28,11 @@ const FileList = () => {
 
         const container = {};
 
-        container.key=file._id;
+        container.key = file._id;
         if (file.type === 'dir') {
-            container.img = <FolderFilled style={{ fontSize: '35px', color: '#08c' }}/>;
+            container.img = <FolderFilled style={{ fontSize: '35px', color: '#08c' }} />;
         } else {
-            container.img = <FileOutlined style={{ fontSize: '35px', color: '#08c' }}/>;
+            container.img = <FileOutlined style={{ fontSize: '35px', color: '#08c' }} />;
         }
         container.name = file.name;
         container.date = file.date.slice(0, 10);
@@ -89,20 +91,31 @@ const FileList = () => {
         }
     ]
 
-    if(files.length == 0){
+    if (files.length == 0) {
         return (
             <div className="loader">Файлы не найдены</div>
         )
     }
 
-    return (
-        <Table onRow={(record, rowIndex) => {
-            return {
-                onClick: event => { openDirHandler(record, rowIndex) }, // click row
-            };
-        }}
-            dataSource={filesStateFormated} columns={columns} className="table" />
-    )
+    if (fileView === 'plate') {
+        return (
+            <div className="grid">
+                {files.map(file => 
+                <File key={file._id} file={file}/>)}
+            </div>
+        )
+    }
+
+    if (fileView === 'list') {
+        return (
+            <Table onRow={(record, rowIndex) => {
+                return {
+                    onClick: event => { openDirHandler(record, rowIndex) }, // click row
+                };
+            }}
+                dataSource={filesStateFormated} columns={columns} className="table" />
+        )
+    }
 }
 
 export default FileList;

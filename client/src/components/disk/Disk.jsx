@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { Button, Row, Col, Input, Select, Spin, Space } from 'antd';
-import { LoadingOutlined } from '@ant-design/icons';
+import { LoadingOutlined, UnorderedListOutlined, InsertRowAboveOutlined } from '@ant-design/icons';
 import { useDispatch, useSelector } from "react-redux";
 import { getFiles, searchFiles, uploadFile } from "../../actions/file";
-import { setCurrentDir } from "../../reducers/fileReducer";
+import { setCurrentDir, setFileView } from "../../reducers/fileReducer";
 import "./disk.less";
 import FileList from "./fileList/FileList";
 import Popup from "./Popup";
@@ -92,24 +92,28 @@ const Disk = () => {
     return (!dragEnter ?
         <div className="disk" onDragEnter={dragEnterHandler} onDragLeave={dragLeaveHandler} onDragOver={dragEnterHandler}>
             <Row>
-                <Col lg={17}>
+                <Col lg={24}>
                     <div className="disk__btns">
                         <Button size={size} className="disk__back" onClick={() => backClickHandler()}>Назад</Button>
                         <Button type="dashed" size={size} className="disk__create" onClick={() => showModal()}>Создать папку</Button>
                         <Input onChange={(event) => fileUploadHandler(event)} multiple="true" type="file" id="disk__upload-input" placeholder="Basic usage" hidden={true} />
                         <label htmlFor="disk__upload-input" className="disk__upload-label">Загрузить файл</label>
 
+                        {isAuth && <Search
+                            className="search"
+                            value={searchName}
+                            placeholder="Поиск по названию"
+                            onChange={(e) => onSearch(e)}
+                            style={{ width: 200 }}/>}
+                        
                         <Select className="sort" defaultValue={sort} style={{ width: 120 }} onChange={handleChange}>
                             <Option value="name">По имени</Option>
                             <Option value="type">По типу</Option>
                             <Option value="date">По дате</Option>
                         </Select>
 
-                        {isAuth && <Search
-                            value={searchName}
-                            placeholder="Назание файла"
-                            onChange={(e) => onSearch(e)}
-                            style={{ width: 200 }}/>}
+                        <UnorderedListOutlined onClick={()=>{dispatch(setFileView('list'))}} style={{ fontSize: '28px' }} className="list"/>
+                        <InsertRowAboveOutlined onClick={()=>{dispatch(setFileView('plate'))}} style={{ fontSize: '28px' }}/>
                     </div>
                 </Col>
             </Row>
