@@ -8,6 +8,7 @@ import Header from './components/Header';
 import Registration from "../src/components/registration/Registration";
 import Login from './components/registration/Login';
 import Disk from "../src/components/disk/Disk";
+import Profile from "../src/components/profile/Profile";
 
 function App() {
   const isAuth = useSelector(state => state.user.isAuth);
@@ -22,7 +23,6 @@ function App() {
       <div className="wrapper">
         <Row>
           <Col span={18} offset={3}>
-            
             {!isAuth ?
               <Routes>
                 <Route path="/registration" element={<Registration />} />
@@ -35,6 +35,7 @@ function App() {
               <Routes>
                 <Route exact path="/" element={<Disk />} />
                 <Route path="*" element={<Navigate to="/" />} />
+                <Route exact path="/profile" element={<Profile />} />
               </Routes>
               </>
             }
